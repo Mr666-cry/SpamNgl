@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NGL Spammer Pro</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #000;
+  --card: #111;
+  --accent: #007bff;
+  --text: #e4e4e4;
+  --success: #00ff9d;
+  --error: #ff4444;
+}
+
+/* reset kecil */
+* { box-sizing: border-box; }
+
+html,body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* body center */
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* tombol kembali */
+.back-button {
+  position: fixed;
+  top: 16px;
+  left: 12px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.back-button:hover {
+  transform: translateY(-2px);
+}
+
+/* particles behind */
+#particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* small dot particle */
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: float 15s linear infinite;
+}
+@keyframes float {
+  0% { transform: translateY(0); opacity: 0.3; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-100vh); opacity: 0.3; }
+}
+
+/* card */
+.container {
+  background: var(--card);
+  padding: 22px;
+  border-radius: 18px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  width: 92%;
+  max-width: 420px;
+  position: relative;
+  z-index: 2;
+  text-align: left;
+}
+
+/* heading */
+h1 {
+  text-align: center;
+  margin: 0 0 16px 0;
+  color: var(--accent);
+  font-size: 22px;
+}
+
+/* form */
+label { font-size: 14px; color: #cfcfcf; display:block; margin-top:8px; }
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+input, textarea {
+  background: #161616;
+  color: var(--text);
+  resize: vertical;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: 0.16s ease;
+  padding: 12px;
+  border-radius: 12px;
+}
+button:hover { transform: translateY(-3px); background: #0063d9; }
+
+/* loading text */
+#loading {
+  display: none;
+  text-align: center;
+  margin-top: 10px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* popup bottom */
+#popupResult {
+  display: none;
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f0f0f;
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.7);
+  color: var(--text);
+  text-align: center;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+#popupResult.show {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#popupIcon { font-size: 22px; display:block; margin-bottom:6px; }
+#popupTitle { margin: 0; font-weight:700; }
+#popupContent { margin: 4px 0 0 0; color:#cfcfcf; font-size:14px; }
+
+/* small responsive tweak so card not fully centered when keyboard opens on mobile:
+   we keep it centered but allow room by using translateY on show-if-needed (kept simple) */
+@media (max-height:600px) {
+  .container { transform: translateY(-6vh); }
+}
+</style>
+</head>
+<body>
+  <!-- Back button -->
+  <a class="back-button" href="http://agusoffc.publicserver.my.id:3003/login" rel="noopener noreferrer">
+    ← Kembali
+  </a>
+
+  <!-- Particles -->
+  <div id="particles"></div>
+
+  <!-- Main card -->
+  <div class="container">
+    <h1>🔥 NGL Spammer Pro</h1>
+    <form id="spamForm">
+      <label for="link">Masukkan Link NGL:</label>
+      <input id="link" type="text" placeholder="https://ngl.link/username" required>
+
+      <label for="pesan">Pesan:</label>
+      <textarea id="pesan" rows="3" placeholder="Isi pesan yang ingin dikirim" required></textarea>
+
+      <label for="jumlah">Jumlah Pesan:</label>
+      <input id="jumlah" type="number" min="1" max="50" value="5" required>
+
+      <button type="submit">Mulai Kirim</button>
+    </form>
+
+    <p id="loading">⏳ Mengirim pesan...</p>
+  </div>
+
+  <!-- Popup -->
+  <div id="popupResult" role="status" aria-live="polite">
+    <div id="popupIcon">✅</div>
+    <div id="popupTitle">Sukses!</div>
+    <div id="popupContent">Pesan berhasil dikirim!</div>
+  </div>
+
+<script>
+// Partikel animasi
+const particlesContainer = document.getElementById('particles');
+for (let i = 0; i < 25; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 15 + 's';
+  p.style.animationDuration = (8 + Math.random() * 12) + 's';
+  particlesContainer.appendChild(p);
+}
+
+// Elements
+const form = document.getElementById('spamForm');
+const loading = document.getElementById('loading');
+const popup = document.getElementById('popupResult');
+const popupIcon = document.getElementById('popupIcon');
+const popupTitle = document.getElementById('popupTitle');
+const popupContent = document.getElementById('popupContent');
+
+// Submit handler
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const link = document.getElementById('link').value.trim();
+  const pesan = document.getElementById('pesan').value.trim();
+  const jumlah = parseInt(document.getElementById('jumlah').value, 10);
+  const delay = 500; // fixed 500ms delay
+
+  if (!link.startsWith('https://ngl.link/')) {
+    showPopup('❌', 'Error', 'Link NGL tidak valid! Pastikan format: https://ngl.link/username', false);
+    return;
+  }
+
+  const parts = link.split('/');
+  const username = parts[parts.length - 1] || parts[3];
+  if (!username) {
+    showPopup('❌', 'Error', 'Tidak dapat membaca username dari link NGL.', false);
+    return;
+  }
+
+  // show loading
+  loading.style.display = 'block';
+  // hide popup while sending
+  popup.classList.remove('show');
+
+  // send loop
+  for (let i = 0; i < jumlah; i++) {
+    try {
+      await fetch('https://ngl.link/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          username: username,
+          question: pesan,
+          deviceId: 'web_' + Math.random().toString(36).substring(2, 12)
+        })
+      });
+    } catch (err) {
+      // ignore per-request errors, we only show simple success message after loop
+    }
+    await new Promise(r => setTimeout(r, delay));
+  }
+
+  loading.style.display = 'none';
+  // show only success notification (no details)
+  showPopup('✅', 'Sukses!', 'Pesan berhasil dikirim!', true);
+});
+
+// popup function: icon,title,message, success boolean
+let popupTimer;
+function showPopup(icon, title, message, success = true) {
+  clearTimeout(popupTimer);
+  popupIcon.textContent = icon || (success ? '✅' : '❌');
+  popupTitle.textContent = title || (success ? 'Sukses!' : 'Error!');
+  popupContent.textContent = message || '';
+  popup.className = success ? 'show' : 'show';
+  // add color class to icon/title via inline style for simplicity
+  popupIcon.style.color = success ? 'var(--success)' : 'var(--error)';
+  popupTitle.style.color = success ? 'var(--success)' : 'var(--error)';
+
+  // show
+  popup.classList.add('show');
+  popup.style.display = 'block';
+
+  // auto hide after 4.5s
+  popupTimer = setTimeout(() => {
+    popup.classList.remove('show');
+    setTimeout(() => { popup.style.display = 'none'; }, 220);
+  }, 4500);
+}
+
+// allow tapping outside to close popup immediately
+document.addEventListener('click', (ev) => {
+  if (popup.style.display === 'block' && !popup.contains(ev.target)) {
+    popup.classList.remove('show');
+    setTimeout(() => (popup.style.display = 'none'), 200);
+  }
+});
+</script>
+</body>
+</html>
